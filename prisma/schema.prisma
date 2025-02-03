@@ -61,3 +61,32 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model Psychologist{
+    id  Int @id @default(autoincrement())
+    name String
+    last_name String
+    folders    InvestigationFolder[]
+}
+
+enum DocumentType {
+    DICTAMEN
+    INFORME
+}
+
+model InvestigationFolder {
+    id              BigInt       @id @default(autoincrement())
+    folio           String
+    victimName      String
+    requestingMP    String
+    crime          String
+    unit           String
+    psychologistId Int
+    psychologist   Psychologist @relation(fields: [psychologistId], references: [id])
+    receivedAt     DateTime
+    deliveredAt    DateTime?
+    document       DocumentType
+
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+}

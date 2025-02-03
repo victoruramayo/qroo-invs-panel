@@ -1,5 +1,6 @@
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
+import DashBoardLayout from "@/app/_components/dashboard";
 
 export default async function RootLayout({
   children,
@@ -7,5 +8,5 @@ export default async function RootLayout({
   const session = await auth();
   if (!session) redirect("/");
 
-  return <>{children}</>;
+  return <DashBoardLayout session={session}>{children}</DashBoardLayout>;
 }

@@ -45,7 +45,7 @@ const credentials = Credentials({
     if (!user || !pwHash) {
       // No user found, so this is their first attempt to login
       // Optionally, this is also the place you could do a user registration
-      throw new Error("Invalid credentials.");
+      return null;
     }
     return user;
   },
@@ -72,6 +72,10 @@ export const authConfig = {
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    error: "/error",
+    signIn: "/",
+  },
   callbacks: {
     session: ({ session, token }) => ({
       ...session,
