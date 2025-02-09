@@ -19,3 +19,7 @@ export const menuItems: MenuItem[] = [
     icon: MdOutlineDocumentScanner,
   },
 ];
+export enum DocumentType {
+  INFORME = "INFORME",
+  DICTAMEN = "DICTAMEN",
+}

@@ -6,7 +6,7 @@ export default async function Dashboard() {
   const session = await auth();
 
   return (
-    <Box>
+    <Box bg="gray.800" color="white" p={8} borderRadius="md">
       <Text fontSize="2xl" fontWeight="bold" mb="4">
         Welcome to the Dashboard!
       </Text>

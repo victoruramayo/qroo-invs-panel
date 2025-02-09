@@ -116,7 +116,7 @@ export default function Login() {
           </Field>
           <Center>
             <Button
-              bg="teal.400"
+              colorPalette="teal"
               size="lg"
               px="8"
               mt="8"

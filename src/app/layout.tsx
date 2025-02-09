@@ -1,7 +1,8 @@
-import "@/styles/globals.css";
+import "../styles/main.css"
 
-import { GeistSans } from "geist/font/sans";
+import { Inter } from 'next/font/google'
 import { type Metadata } from "next";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { Provider } from "@/components/ui/provider";
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   description: "Dashboard para fiscalia",
   icons: [{ rel: "icon", url: "/speedometer.ico" }],
 };
+const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
@@ -18,7 +20,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable}`}
+      className={`${inter.className}`}
       suppressHydrationWarning={true}
     >
       <body>

@@ -58,6 +58,7 @@ const Sidebar = ({
     <Box
       w="250px"
       h="100vh"
+      bg={"gray.800"}
       display={{ base: "none", md: "block" }} // Ocultar en dispositivos pequeños
     >
       <Text
@@ -70,31 +71,31 @@ const Sidebar = ({
       >
         Panel
       </Text>
-      <VStack flex={1}>
-        <List.Root w="full">
-          {menu.map((item, index) => (
-            <List.Item key={index}>
-              <IconButton
-                aria-label={item.label}
-                borderRadius="0"
-                w="full"
-                onClick={() => setActiveItem(index, item.to)}
-                bg={activateItemIndex == index && "gray.600"}
-                _hover={{
-                  backgroundColor: "gray.600",
-                }}
-              >
-                <Box flex={1} pl={4}>
-                  {!!item.icon && item.icon({})}
-                </Box>
+      <VStack gap="0">
+        {menu.map((item, index) => (
+          <IconButton
+            key={index}
+            aria-label={item.label}
+            borderRadius="0"
+            variant="solid"
+            color="white"
+            bg={activateItemIndex == index ? "teal.800" : "teal.600"}
+            _hover={{
+              backgroundColor: "teal.800",
+            }}
+            w="full"
+            onClick={() => setActiveItem(index, item.to)}
+            colorPalette="gray"
+          >
+            <Box flex={1} pl={4}>
+              {!!item.icon && item.icon({})}
+            </Box>
 
-                <Text flex={4} textAlign="start">
-                  {item.label}
-                </Text>
-              </IconButton>
-            </List.Item>
-          ))}
-        </List.Root>
+            <Text flex={4} textAlign="start">
+              {item.label}
+            </Text>
+          </IconButton>
+        ))}
       </VStack>
     </Box>
   </Presence>
@@ -129,29 +130,25 @@ const MobileSidebar = ({
         </DrawerTitle>
       </DrawerHeader>
       <DrawerBody px="0">
-        <List.Root w="full">
-          {menu.map((item, index) => (
-            <List.Item key={index}>
-              <IconButton
-                aria-label={item.label}
-                borderRadius="0"
-                w="full"
-                onClick={() => {
-                  setActiveItem(index, item.to);
-                  onClose(false);
-                }}
-                bg={activateItemIndex == index && "gray.600"}
-                _hover={{
-                  backgroundColor: "gray.600",
-                }}
-              >
-                <Text pl="4" flex={1} textAlign="start">
-                  {item.label}
-                </Text>
-              </IconButton>
-            </List.Item>
-          ))}
-        </List.Root>
+        {menu.map((item, index) => (
+          <IconButton
+            aria-label={item.label}
+            borderRadius="0"
+            w="full"
+            onClick={() => {
+              setActiveItem(index, item.to);
+              onClose(false);
+            }}
+            bg={activateItemIndex == index ? "teal.800" : "teal.600"}
+            _hover={{
+              backgroundColor: "gray.600",
+            }}
+          >
+            <Text pl="4" flex={1} textAlign="start">
+              {item.label}
+            </Text>
+          </IconButton>
+        ))}
       </DrawerBody>
       <DrawerCloseTrigger />
     </DrawerContent>
@@ -208,11 +205,11 @@ export default function DashBoardLayout({
 
       {/* Contenido principal */}
       <Box flex="1" bg="gray.500" color="white">
-        <HStack justify="space-between" mb={6} bg="gray.900" p={4}>
+        <HStack justify="space-between" mb={6} bg="gray.800" p={4}>
           <IconButton
             onClick={onToggle}
-            color="white"
             aria-label="Open Sidebar"
+            variant="ghost"
           >
             <MdMenu />
           </IconButton>
@@ -225,7 +222,7 @@ export default function DashBoardLayout({
             onSelect={closeUser}
           >
             <MenuTrigger asChild>
-              <Button>
+              <Button bg="gray.800" color="white">
                 <Avatar
                   name={session.user.name ?? ""}
                   colorPalette={pickPalette(session.user.name ?? "")}
