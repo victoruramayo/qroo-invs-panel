@@ -47,7 +47,7 @@ export const PasswordInput = React.forwardRef<
 
   const [visible, setVisible] = useControllableState({
     value: visibleProp,
-    defaultValue: defaultVisible || false,
+    defaultValue: defaultVisible ?? false,
     onChange: onVisibleChange,
   })
 

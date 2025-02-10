@@ -3,8 +3,10 @@
 import { useSearchParams } from "next/navigation";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import LoadingSpinner from "@/app/_components/LoadingSpinner";
 
-export default function ErrorPage() {
+function ClientErrorPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error") ?? "Unknown error";
@@ -21,5 +23,12 @@ export default function ErrorPage() {
         Go to Login
       </Button>
     </Box>
+  );
+}
+export default function ErrorPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <ClientErrorPage />
+    </Suspense>
   );
 }

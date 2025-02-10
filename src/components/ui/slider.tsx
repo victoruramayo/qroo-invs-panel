@@ -17,7 +17,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       return mark
     })
 
-    const hasMarkLabel = !!marks?.some((mark) => mark.label)
+    const hasMarkLabel = !!marks?.some((mark) => !!mark.label)
 
     return (
       <ChakraSlider.Root ref={ref} thumbAlignment="center" {...rest}>
@@ -38,7 +38,7 @@ export const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
           <SliderMarks marks={marks} />
         </ChakraSlider.Control>
       </ChakraSlider.Root>
-    )
+    );
   },
 )
 

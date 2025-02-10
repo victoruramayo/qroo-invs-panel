@@ -1,13 +1,11 @@
 "use client";
 
 import {
-  Box,
   Button,
   createListCollection,
   HStack,
   IconButton,
   Input,
-  Text,
 } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { api } from "@/trpc/react";
@@ -24,7 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
-import { Psicologist } from "@/app/model/psicologist";
+import { type Psicologist } from "@/app/model/psicologist";
 import {
   SelectContent,
   SelectItem,
@@ -123,7 +121,7 @@ export default function InvestigationForm({
   };
 
   return (
-    <DialogRoot open={isOpen} onOpenChange={(e) => onToogle()}>
+    <DialogRoot open={isOpen} onOpenChange={onToogle}>
       <DialogContent bg="gray.600" ref={contentRef}>
         <DialogCloseTrigger />
         <DialogHeader>
