@@ -1,4 +1,4 @@
-import { IconType } from "react-icons";
+import { type IconType } from "react-icons";
 import { MdHome, MdOutlineDocumentScanner } from "react-icons/md";
 
 export interface MenuItem {

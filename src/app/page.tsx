@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
   Box,
   Button,
@@ -21,8 +21,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import LoadingSpinner from "@/app/_components/LoadingSpinner";
 
-export default function Login() {
+function Login() {
   const FormSchema = z.object({
     email: z.string().min(2, {
       message: "Email required.",
@@ -49,7 +50,7 @@ export default function Login() {
   };
 
   const [visible, setVisible] = useState(false);
-  const [loginError, setLoginError] = useState(
+  const [loginError] = useState(
     params.get("error")
       ? "Invalid credentials. Please check your email and password."
       : "",
@@ -134,5 +135,13 @@ export default function Login() {
         </Text>
       </Stack>
     </Flex>
+  );
+}
+
+export default function RootPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <Login />
+    </Suspense>
   );
 }

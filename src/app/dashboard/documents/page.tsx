@@ -1,17 +1,11 @@
 "use client";
 import {
   Box,
-  Button,
-  Center,
   createListCollection,
-  DataList,
   Flex,
   Heading,
-  HStack,
   IconButton,
   Input,
-  Spinner,
-  Stack,
   Table,
   Text,
   useBreakpointValue,
@@ -28,14 +22,11 @@ import {
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
 import InvestigationForm from "@/app/_components/ModalInvestigationForm";
+import LoadingSpinner from "@/app/_components/LoadingSpinner";
 
 export default function DesignTokens() {
   const { data: psicols } = api.psychologists.getPsychologists.useQuery();
-  const {
-    data: documents,
-    isLoading,
-    error,
-  } = api.document.getDocuments.useQuery({});
+  const { data: documents, isLoading } = api.document.getDocuments.useQuery({});
   const [collections, setCollection] = useState(
     createListCollection({
       items:
@@ -183,10 +174,7 @@ export default function DesignTokens() {
 
       {/* Data Table */}
       {isLoading ? (
-        <VStack colorPalette="teal">
-          <Spinner color="colorPalette.600" />
-          <Text color="colorPalette.600">Loading...</Text>
-        </VStack>
+        <LoadingSpinner />
       ) : (
         <Box border="1px solid" borderColor="gray.700" borderRadius="md">
           <Table.ScrollArea borderWidth="1px" minW="3xs">

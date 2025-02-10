@@ -1,13 +1,12 @@
 "use client";
 import { type Session } from "next-auth";
-import React, { ReactNode, useState } from "react";
+import React, { type ReactNode, useState } from "react";
 import {
   Box,
   Button,
   Flex,
   HStack,
   IconButton,
-  List,
   Presence,
   Text,
   useBreakpointValue,
@@ -30,7 +29,7 @@ import {
   MenuTrigger,
 } from "@/components/ui/menu";
 import { MdMenu, MdOutlineArrowDropDown } from "react-icons/md";
-import { MenuItem, menuItems } from "@/app/model/menu";
+import { type MenuItem, menuItems } from "@/app/model/menu";
 import { useRouter } from "next/navigation";
 import { Avatar } from "@/components/ui/avatar";
 import { signOut } from "next-auth/react";
@@ -245,7 +244,9 @@ export default function DashBoardLayout({
             </MenuContent>
           </MenuRoot>
         </HStack>
-        <Box p={6} minW="full">{children}</Box>
+        <Box p={6} minW="full">
+          {children}
+        </Box>
       </Box>
     </Flex>
   );
