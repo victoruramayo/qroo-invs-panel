@@ -3,6 +3,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -52,6 +53,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    investigationsCreated InvestigationFolder[] @relation("investigationsCreated")
+    lastInvestigationsUpdated InvestigationFolder[] @relation("lastInvestigationsUpdated")
 }
 
 model VerificationToken {
@@ -60,4 +63,39 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Psychologist{
+    id  Int @id @default(autoincrement())
+    name String
+    last_name String
+    folders    InvestigationFolder[]
+}
+
+enum DocumentType {
+    DICTAMEN
+    INFORME
+}
+
+model InvestigationFolder {
+    id              BigInt       @id @default(autoincrement())
+    folio           String        @unique
+    victimName      String
+    requestingMP    String
+    crime          String
+    unit           String
+    psychologistId Int
+    psychologist   Psychologist @relation(fields: [psychologistId], references: [id])
+    receivedAt     DateTime
+    deliveredAt    DateTime?
+    document       DocumentType?
+
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+
+    createdByUserId     String
+    createdByUser       User @relation("investigationsCreated",fields: [createdByUserId], references: [id])
+
+    lastUpdateByUserId     String
+    lastUpdateByUser       User @relation("lastInvestigationsUpdated",fields: [lastUpdateByUserId], references: [id])
 }

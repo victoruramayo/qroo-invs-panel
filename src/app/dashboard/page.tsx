@@ -1,26 +1,16 @@
-import { auth, signOut } from "@/server/auth";
-import { redirect } from "next/navigation";
-import { Button } from "@chakra-ui/react";
+import { auth } from "@/server/auth";
+import { Box, Text } from "@chakra-ui/react";
+import React from "react";
 
 export default async function Dashboard() {
   const session = await auth();
-  if (!session) redirect("/");
 
   return (
-    <>
-      <h1>Bienvenido, {session.user.email}</h1>;
-      <Button
-        bg="teal.400"
-        size="lg"
-        px="8"
-        mt="8"
-        onClick={async () => {
-          "use server";
-          await signOut();
-        }}
-      >
-        Salir
-      </Button>
-    </>
+    <Box bg="gray.800" color="white" p={8} borderRadius="md">
+      <Text fontSize="2xl" fontWeight="bold" mb="4">
+        Welcome to the Dashboard!
+      </Text>
+      <Text fontSize="md">Bienvenido, {session?.user.email}</Text>
+    </Box>
   );
 }

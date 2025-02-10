@@ -20,6 +20,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 export default function Login() {
   const FormSchema = z.object({
@@ -42,11 +43,17 @@ export default function Login() {
       password: "",
     },
   });
-  const onSubmit =async (data: FormData) => {
+  const params = useSearchParams();
+  const onSubmit = async (data: FormData) => {
     await signIn("credentials", { ...data, redirectTo: "/dashboard" });
   };
 
   const [visible, setVisible] = useState(false);
+  const [loginError, setLoginError] = useState(
+    params.get("error")
+      ? "Invalid credentials. Please check your email and password."
+      : "",
+  );
 
   return (
     <Flex
@@ -67,6 +74,13 @@ export default function Login() {
             Sign in to the workspace
           </Heading>
         </Stack>
+        <Stack>
+          {loginError && (
+            <Text color="red.400" textAlign="center" mt={4}>
+              {loginError}
+            </Text>
+          )}
+        </Stack>
         <VStack my="8" gap={4}>
           <Field
             label="Correo"
@@ -83,8 +97,13 @@ export default function Login() {
               {...register("email")}
             />
           </Field>
-          <Field label="Contrasenia" required mt="2" invalid={!!errors.password}
-                 errorText={errors.password?.message}>
+          <Field
+            label="Contrasenia"
+            required
+            mt="2"
+            invalid={!!errors.password}
+            errorText={errors.password?.message}
+          >
             <PasswordInput
               px="4"
               my="1"
@@ -97,7 +116,7 @@ export default function Login() {
           </Field>
           <Center>
             <Button
-              bg="teal.400"
+              colorPalette="teal"
               size="lg"
               px="8"
               mt="8"
