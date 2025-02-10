@@ -17,7 +17,7 @@ import {
   useBreakpointValue,
   VStack,
 } from "@chakra-ui/react";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
 import {
   SelectContent,
   SelectItem,
@@ -188,47 +188,67 @@ export default function DesignTokens() {
           <Text color="colorPalette.600">Loading...</Text>
         </VStack>
       ) : (
-        <Box
-          border="1px solid"
-          borderColor="gray.700"
-          borderRadius="md"
-          overflow="hidden"
-        >
-          <Table.Root>
-            <Table.Header>
-              <Table.Row bg="gray.700">
-                <Table.ColumnHeader color="white">Name</Table.ColumnHeader>
-                <Table.ColumnHeader color="white">Value</Table.ColumnHeader>
-                <Table.ColumnHeader color="white">Type</Table.ColumnHeader>
-                <Table.ColumnHeader color="white">Actions</Table.ColumnHeader>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {documents?.map((document) => (
-                <Table.Row key={document.folio}>
-                  <Table.Cell>{document.victimName}</Table.Cell>
-                  <Table.Cell>{document.requestingMP}</Table.Cell>
-                  <Table.Cell>{document.psychologist.name}</Table.Cell>
-                  <Table.Cell>
-                    <Button size="sm" colorScheme="teal">
-                      Edit
-                    </Button>
-                  </Table.Cell>
+        <Box border="1px solid" borderColor="gray.700" borderRadius="md">
+          <Table.ScrollArea borderWidth="1px" minW="3xs">
+            <Table.Root size="sm">
+              <Table.Header>
+                <Table.Row bg="gray.700">
+                  <Table.ColumnHeader color="white">Folio</Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">Victima</Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">MP</Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">
+                    Psicologo
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">Crimen</Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">
+                    Recepcion
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">Entrega</Table.ColumnHeader>
+                  <Table.ColumnHeader color="white">
+                    Opciones
+                  </Table.ColumnHeader>
                 </Table.Row>
-              ))}
-
-              <Table.Row>
-                <Table.Cell>Secondary Color</Table.Cell>
-                <Table.Cell>#2D3748</Table.Cell>
-                <Table.Cell>Color</Table.Cell>
-                <Table.Cell>
-                  <Button size="sm" colorScheme="teal">
-                    Edit
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table.Root>
+              </Table.Header>
+              <Table.Body>
+                {documents?.map((document) => (
+                  <Table.Row key={document.folio}>
+                    <Table.Cell>{document.folio}</Table.Cell>
+                    <Table.Cell>{document.victimName}</Table.Cell>
+                    <Table.Cell>{document.requestingMP}</Table.Cell>
+                    <Table.Cell>
+                      {document.psychologist.name}{" "}
+                      {document.psychologist.last_name}
+                    </Table.Cell>
+                    <Table.Cell>{document.crime}</Table.Cell>
+                    <Table.Cell>
+                      {document.receivedAt.toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {document.deliveredAt?.toLocaleDateString() ?? "N/A"}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <IconButton
+                        size="sm"
+                        colorPalette="purple"
+                        rounded="full"
+                        mx={2}
+                      >
+                        <MdEdit />
+                      </IconButton>
+                      <IconButton
+                        size="sm"
+                        colorPalette="red"
+                        rounded="full"
+                        mx={2}
+                      >
+                        <MdDelete />
+                      </IconButton>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Table.ScrollArea>
         </Box>
       )}
       <InvestigationForm

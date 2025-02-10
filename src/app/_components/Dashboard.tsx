@@ -132,6 +132,7 @@ const MobileSidebar = ({
       <DrawerBody px="0">
         {menu.map((item, index) => (
           <IconButton
+            key={index}
             aria-label={item.label}
             borderRadius="0"
             w="full"
@@ -204,7 +205,7 @@ export default function DashBoardLayout({
       )}
 
       {/* Contenido principal */}
-      <Box flex="1" bg="gray.500" color="white">
+      <Box flex="1" bg="gray.500" minW="100%" color="white">
         <HStack justify="space-between" mb={6} bg="gray.800" p={4}>
           <IconButton
             onClick={onToggle}
@@ -244,7 +245,7 @@ export default function DashBoardLayout({
             </MenuContent>
           </MenuRoot>
         </HStack>
-        <Box p={6}>{children}</Box>
+        <Box p={6} minW="full">{children}</Box>
       </Box>
     </Flex>
   );

@@ -12,7 +12,7 @@ export default async function RootLayout({
   return (
     <DashBoardLayout session={session}>
       {children}
-      <Toaster />
+      <Toaster/>
     </DashBoardLayout>
   );
 }

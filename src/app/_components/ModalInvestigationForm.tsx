@@ -4,6 +4,8 @@ import {
   Box,
   Button,
   createListCollection,
+  HStack,
+  IconButton,
   Input,
   Text,
 } from "@chakra-ui/react";
@@ -33,7 +35,7 @@ import {
 import { useRef } from "react";
 import DatePicker from "react-datepicker";
 import { InputGroup } from "@/components/ui/input-group";
-import { MdDateRange } from "react-icons/md";
+import { MdDateRange, MdDelete } from "react-icons/md";
 import { toaster } from "@/components/ui/toaster";
 
 export default function InvestigationForm({
@@ -78,7 +80,7 @@ export default function InvestigationForm({
       unit: "",
       psychologistId: 0,
       receivedAt: new Date(),
-      deliveredAt: undefined as(Date | undefined),
+      deliveredAt: undefined as Date | undefined,
     },
   });
   const collectionpPsi = createListCollection({
@@ -259,7 +261,21 @@ export default function InvestigationForm({
                 <InputGroup
                   color="white"
                   w="full"
-                  endElement={<MdDateRange color="white" />}
+                  endElement={
+                    <HStack>
+                      {!!field.value && (
+                        <IconButton
+                          colorPalette="red"
+                          size="xs"
+                          variant="ghost"
+                          onClick={() => field.onChange(undefined)}
+                        >
+                          <MdDelete />
+                        </IconButton>
+                      )}
+                      <MdDateRange color="white" />
+                    </HStack>
+                  }
                 >
                   <DatePicker
                     {...field}
@@ -274,7 +290,7 @@ export default function InvestigationForm({
             />
           </Field>
 
-          <Button onClick={handleSubmit(onSubmit)} color="primary" mt={4}>
+          <Button onClick={handleSubmit(onSubmit)} colorPalette="teal" mt={4}>
             Guardar
           </Button>
         </DialogBody>
