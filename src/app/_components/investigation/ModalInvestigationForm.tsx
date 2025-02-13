@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Button,
-  createListCollection,
-  HStack,
-  IconButton,
-  Input,
-} from "@chakra-ui/react";
+import { Button, HStack, IconButton, Input } from "@chakra-ui/react";
 import { Controller, useForm } from "react-hook-form";
 import { api } from "@/trpc/react";
 import { z } from "zod";
@@ -35,6 +29,10 @@ import DatePicker from "react-datepicker";
 import { InputGroup } from "@/components/ui/input-group";
 import { MdDateRange, MdDelete } from "react-icons/md";
 import { toaster } from "@/components/ui/toaster";
+import {
+  getPsychologistCollect,
+  getTypeDocumentCollect,
+} from "@/app/utils/collectionsSelector";
 
 export default function InvestigationForm({
   isOpen,
@@ -47,6 +45,9 @@ export default function InvestigationForm({
 }) {
   const investigationSchema = z.object({
     folio: z.string().min(3, "El folio debe tener al menos 3 caracteres"),
+    folderNumber: z
+      .string()
+      .min(3, "El folio debe tener al menos 3 caracteres"),
     victimName: z.string().min(3, "El nombre de la víctima es obligatorio"),
     requestingMP: z.string().min(3, "El MP solicitante es obligatorio"),
     crime: z.string().min(3, "El delito es obligatorio"),
@@ -72,21 +73,19 @@ export default function InvestigationForm({
     resolver: zodResolver(investigationSchema),
     defaultValues: {
       folio: "",
+      folderNumber: "",
       victimName: "",
       requestingMP: "",
       crime: "",
       unit: "",
+      documentType: undefined,
       psychologistId: 0,
       receivedAt: new Date(),
       deliveredAt: undefined as Date | undefined,
     },
   });
-  const collectionpPsi = createListCollection({
-    items: psycologists.map((p) => ({
-      label: `${p.name} ${p.last_name}`,
-      value: p.id,
-    })),
-  });
+  const collectionpPsi = getPsychologistCollect(psycologists);
+  const collectionTypeDoc = getTypeDocumentCollect();
   const contentRef = useRef<HTMLDivElement>(null);
 
   const utils = api.useUtils();
@@ -144,6 +143,15 @@ export default function InvestigationForm({
           </Field>
 
           <Field
+            label="Numero de carpeta"
+            required
+            invalid={!!errors.folderNumber}
+            errorText={errors.folderNumber?.message}
+          >
+            <Input {...register("folderNumber")} />
+          </Field>
+
+          <Field
             label="Nombre de la Víctima"
             required
             mt="2"
@@ -186,7 +194,7 @@ export default function InvestigationForm({
           <Field
             label="Psicolo asignado"
             required
-            mt="2"
+            py="2"
             invalid={!!errors.psychologistId}
             errorText={errors.psychologistId?.message}
           >
@@ -209,6 +217,38 @@ export default function InvestigationForm({
                 {collectionpPsi.items.map((psi) => (
                   <SelectItem item={psi} key={psi.value}>
                     {psi.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectRoot>
+          </Field>
+
+          <Field
+            label="Tipo de Documento"
+            required
+            py="2"
+            invalid={!!errors.documentType}
+            errorText={errors.documentType?.message}
+          >
+            <SelectRoot
+              collection={collectionTypeDoc}
+              bg="gray.600"
+              color="white"
+              variant="outline"
+              positioning={{ placement: "bottom", flip: false }}
+              {...register("documentType")}
+            >
+              <SelectTrigger>
+                <SelectValueText
+                  fontSize="sm"
+                  placeholder="Selecciona Tipo de Documento"
+                  color="white"
+                />
+              </SelectTrigger>
+              <SelectContent portalRef={contentRef}>
+                {collectionTypeDoc.items.map((doc) => (
+                  <SelectItem item={doc} key={doc.value}>
+                    {doc.label}
                   </SelectItem>
                 ))}
               </SelectContent>
