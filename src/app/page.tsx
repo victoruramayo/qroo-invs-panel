@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import LoadingSpinner from "@/app/_components/LoadingSpinner";
+import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
 
 function Login() {
   const FormSchema = z.object({

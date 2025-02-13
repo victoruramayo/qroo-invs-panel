@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Box, Button, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
-import LoadingSpinner from "@/app/_components/LoadingSpinner";
+import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
 
 function ClientErrorPage() {
   const router = useRouter();

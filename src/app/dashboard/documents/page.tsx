@@ -21,37 +21,20 @@ import {
 } from "@/components/ui/select";
 import { api } from "@/trpc/react";
 import { useEffect, useState } from "react";
-import InvestigationForm from "@/app/_components/ModalInvestigationForm";
-import LoadingSpinner from "@/app/_components/LoadingSpinner";
+import InvestigationForm from "@/app/_components/investigation/ModalInvestigationForm";
+import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
+import {
+  getPsychologistCollect,
+  getTypeDocumentCollect,
+} from "@/app/utils/collectionsSelector";
 
 export default function DesignTokens() {
   const { data: psicols } = api.psychologists.getPsychologists.useQuery();
   const { data: documents, isLoading } = api.document.getDocuments.useQuery({});
   const [collections, setCollection] = useState(
-    createListCollection({
-      items:
-        psicols?.map((p) => ({
-          label: `${p.name} ${p.last_name}`,
-          value: p.id,
-        })) ?? [],
-    }),
+    getPsychologistCollect(psicols),
   );
-  const typeDocumentCollection = createListCollection({
-    items: [
-      {
-        label: "Todos",
-        value: "N/A",
-      },
-      {
-        label: "Dictamen",
-        value: "DICTAMEN",
-      },
-      {
-        label: "Informe",
-        value: "INFORME",
-      },
-    ],
-  });
+  const typeDocumentCollection = getTypeDocumentCollect(true);
   const [open, setOpen] = useState(false);
   const alignValue = useBreakpointValue({
     base: "center",
@@ -60,15 +43,7 @@ export default function DesignTokens() {
   });
 
   useEffect(() => {
-    setCollection(
-      createListCollection({
-        items:
-          psicols?.map((p) => ({
-            label: `${p.name} ${p.last_name}`,
-            value: p.id,
-          })) ?? [],
-      }),
-    );
+    setCollection(getPsychologistCollect(psicols));
   }, [psicols]);
 
   const onOpenModal = () => {
