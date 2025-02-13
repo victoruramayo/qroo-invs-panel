@@ -52,6 +52,7 @@ export const invesmentDocumentRouter = createTRPCRouter({
       z.object({
         victimName: z.string().min(1),
         folio: z.string().min(1),
+        folderNumber: z.string().min(1),
         requestingMP: z.string().min(1),
         crime: z.string().min(1),
         unit: z.string().min(1),
@@ -76,6 +77,7 @@ export const invesmentDocumentRouter = createTRPCRouter({
         data: {
           victimName: input.victimName,
           folio: input.folio,
+          folderNumber: input.folderNumber,
           requestingMP: input.requestingMP,
           crime: input.crime,
           unit: input.unit,

@@ -1,6 +1,6 @@
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
-import DashBoardLayout from "@/app/_components/Dashboard";
+import DashBoardLayout from "@/app/_components/dashboard/Dashboard";
 import { Toaster } from "@/components/ui/toaster";
 
 export default async function RootLayout({
