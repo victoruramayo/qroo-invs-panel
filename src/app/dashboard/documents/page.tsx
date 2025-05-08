@@ -1,224 +1,199 @@
 "use client";
-import {
-  Box,
-  createListCollection,
-  Flex,
-  Heading,
-  IconButton,
-  Input,
-  Table,
-  Text,
-  useBreakpointValue,
-  VStack,
-} from "@chakra-ui/react";
-import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
-import {
-  SelectContent,
-  SelectItem,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from "@/components/ui/select";
-import { api } from "@/trpc/react";
-import { useEffect, useState } from "react";
-import InvestigationForm from "@/app/_components/investigation/ModalInvestigationForm";
-import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
-import {
-  getPsychologistCollect,
-  getTypeDocumentCollect,
-} from "@/app/utils/collectionsSelector";
 
-export default function DesignTokens() {
+import { DataGrid } from "@mui/x-data-grid";
+import { api } from "@/trpc/react";
+import { useEffect, useMemo, useState } from "react";
+import { Box, Container, Grid } from "@mui/system";
+import {
+  Button,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { Add, Search } from "@mui/icons-material";
+import { columns } from "@/app/_components/commons/documents/Columns";
+
+export default function Documents() {
   const { data: psicols } = api.psychologists.getPsychologists.useQuery();
   const { data: documents, isLoading } = api.document.getDocuments.useQuery({});
-  const [collections, setCollection] = useState(
-    getPsychologistCollect(psicols),
-  );
-  const typeDocumentCollection = getTypeDocumentCollect(true);
-  const [open, setOpen] = useState(false);
-  const alignValue = useBreakpointValue({
-    base: "center",
-    sm: "center",
-    md: "start",
-  });
+  const dictamenTypes = [
+    { label: "Todos", value: "N/A" },
+    { label: "Dictamen", value: "DICTAMEN" },
+    { label: "Informe", value: "INFORME" },
+  ];
+
+  const [selectedPsychologist, setSelectedPsychologist] = useState("0");
+  const [selectedDictamenType, setSelectedDictamenType] = useState("N/A");
+  const [folioSearch, setFolioSearch] = useState("");
+  const [victimSearch, setVictimSearch] = useState("");
+  const [mpSearch, setMpSearch] = useState("");
+  const [documentsColumns, setDocumentsColumns] = useState([]);
 
   useEffect(() => {
-    setCollection(getPsychologistCollect(psicols));
-  }, [psicols]);
+    let isMounted = true;
 
-  const onOpenModal = () => {
-    setOpen(true);
-  };
+    if (documents && isMounted) {
+      const mappedDocs = documents.map((doc) => ({
+        id: doc.id,
+        victim: doc.victimName,
+        psychologist: doc.psychologist.name,
+        mp: doc.requestingMP,
+        crime: doc.crime,
+        reception: doc.createdAt.toLocaleDateString(),
+        delivery: doc.deliveredAt?.toLocaleDateString() ?? "No entregado",
+      }));
+      setDocumentsColumns(mappedDocs);
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [documents]);
+
   return (
-    <Box bg="gray.800" color="white" p={8} borderRadius="md">
-      {/* Header */}
-      <VStack align={alignValue} py={8} w="full">
-        <Heading textAlign="start" size="lg" fontWeight="bold">
-          Carpetas de investigacion
-        </Heading>
-
-        <IconButton
-          bg="teal.600"
-          variant="solid"
-          aria-label="Search database"
-          _hover={{ backgroundColor: "teal.400" }}
-          onClick={onOpenModal}
-          color="white"
-          px="4"
-        >
-          <MdAdd />
-          <Text fontSize="sm" fontWeight="bold">
-            Agregar Nuevo
-          </Text>
-        </IconButton>
-      </VStack>
-
-      <Flex
-        mb={4}
-        gap={8}
-        w="full"
-        pr="8"
-        alignItems="center"
-        justifyContent="center"
-        direction="row" // Cambiar la dirección de las columnas en pantallas pequeñas
-        wrap="wrap" //
+    <>
+      <Typography
+        variant="h5"
+        component="h1"
+        gutterBottom
+        sx={{ fontWeight: "bold" }}
       >
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <SelectRoot
-            collection={typeDocumentCollection}
-            bg="gray.800"
-            color="white"
-          >
-            <SelectTrigger>
-              <SelectValueText fontSize="sm" placeholder="Selecciona Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              {typeDocumentCollection.items.map((psi) => (
-                <SelectItem item={psi} key={psi.value}>
-                  {psi.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <SelectRoot collection={collections} bg="gray.800" color="white">
-            <SelectTrigger>
-              <SelectValueText
-                fontSize="sm"
-                placeholder="Selecciona psicologo"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {collections.items.map((psi) => (
-                <SelectItem item={psi} key={psi.value}>
-                  {psi.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </Box>{" "}
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por numero de folio"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por nombre de victima"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por MP"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-      </Flex>
+        Carpetas de investigación
+      </Typography>
+      <Button variant="contained" startIcon={<Add />} sx={{ my: 4 }}>
+        Agregar Nuevo
+      </Button>
 
-      {/* Data Table */}
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <Box border="1px solid" borderColor="gray.700" borderRadius="md">
-          <Table.ScrollArea borderWidth="1px" minW="3xs">
-            <Table.Root size="sm">
-              <Table.Header>
-                <Table.Row bg="gray.700">
-                  <Table.ColumnHeader color="white">Folio</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Victima</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">MP</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Psicologo
-                  </Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Crimen</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Recepcion
-                  </Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Entrega</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Opciones
-                  </Table.ColumnHeader>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {documents?.map((document) => (
-                  <Table.Row key={document.folio}>
-                    <Table.Cell>{document.folio}</Table.Cell>
-                    <Table.Cell>{document.victimName}</Table.Cell>
-                    <Table.Cell>{document.requestingMP}</Table.Cell>
-                    <Table.Cell>
-                      {document.psychologist.name}{" "}
-                      {document.psychologist.last_name}
-                    </Table.Cell>
-                    <Table.Cell>{document.crime}</Table.Cell>
-                    <Table.Cell>
-                      {document.receivedAt.toLocaleDateString()}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {document.deliveredAt?.toLocaleDateString() ?? "N/A"}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <IconButton
-                        size="sm"
-                        colorPalette="purple"
-                        rounded="full"
-                        mx={2}
-                      >
-                        <MdEdit />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        colorPalette="red"
-                        rounded="full"
-                        mx={2}
-                      >
-                        <MdDelete />
-                      </IconButton>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Root>
-          </Table.ScrollArea>
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        {/* Psychologist Selector */}
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <FormControl fullWidth>
+            <InputLabel id="psychologist-select-label">Psicólogo</InputLabel>
+            <Select
+              labelId="psychologist-select-label"
+              id="psychologist-select"
+              value={selectedPsychologist}
+              label="Selecciona psicólogo"
+              onChange={(e) => setSelectedPsychologist(e.target.value)}
+            >
+              <MenuItem value="0">Todos</MenuItem>
+              {psicols?.map((psicol) => (
+                <MenuItem key={psicol.id} value={psicol.id}>
+                  {psicol.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <FormControl fullWidth>
+            <InputLabel id="dictamen-type-select-label">
+              Tipo de dictamen
+            </InputLabel>
+            <Select
+              labelId="dictamen-type-select-label"
+              id="dictamen-type-select"
+              value={selectedDictamenType}
+              label="Tipo de dictamen"
+              onChange={(e) => setSelectedDictamenType(e.target.value)}
+            >
+              {dictamenTypes.map((type) => (
+                <MenuItem key={type.value} value={type.value}>
+                  {type.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <FormControl fullWidth>
+            <TextField
+              fullWidth
+              label="Buscar por folio"
+              variant="outlined"
+              value={folioSearch}
+              onChange={(e) => setFolioSearch(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} offset={{ lg: 2 }}>
+          <FormControl fullWidth>
+            <TextField
+              fullWidth
+              label="Buscar por víctima"
+              variant="outlined"
+              value={victimSearch}
+              onChange={(e) => setVictimSearch(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} offset={{ md: 3, lg: 0 }}>
+          <FormControl fullWidth>
+            <TextField
+              fullWidth
+              label="Buscar por MP"
+              variant="outlined"
+              value={mpSearch}
+              onChange={(e) => setMpSearch(e.target.value)}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Search />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
+      {/* DataGrid */}
+      <Paper elevation={3} sx={{ overflowX: "auto" }}>
+        <Box sx={{ width: "100%" }}>
+          <DataGrid
+            rows={documentsColumns}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { pageSize: 10, page: 0 },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection={false}
+            disableColumnMenu
+            disableColumnSorting
+            disableRowSelectionOnClick
+          />
         </Box>
-      )}
-      <InvestigationForm
-        isOpen={open}
-        onToogle={() => setOpen((oldVal) => !oldVal)}
-        psycologists={psicols ?? []}
-      />
-    </Box>
+      </Paper>
+    </>
   );
 }

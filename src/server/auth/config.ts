@@ -35,8 +35,10 @@ const credentials = Credentials({
     // logic to salt and hash password
 
     // logic to verify if the user exists
-    const user = await db.user.findFirst({
+    const user = await db.user.findUnique({
       where: { email: String(credentials.email) },
+      relationLoadStrategy: "join",
+      include: { psychologists: true },
     });
     const pwHash = await bcrypt.compare(
       String(credentials.password),
@@ -70,10 +72,11 @@ export const authConfig = {
     credentials,
   ],
   adapter: PrismaAdapter(db),
+  trustHost: true,
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    error: "/error",
+    error: "/",
     signIn: "/",
   },
   callbacks: {
