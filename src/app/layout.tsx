@@ -3,7 +3,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "@/trpc/react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { Roboto } from "next/font/google";
-import { CssVarsProvider, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import theme from "../theme";
 
 import { SessionProvider } from "next-auth/react";
@@ -27,18 +27,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={roboto.variable}>
-      <head>
-        <InitColorSchemeScript attribute="class" />
-      </head>
-
+    <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body>
-        <AppRouterCacheProvider options={{ key: "css", enableCssLayer: true }}>
+        <InitColorSchemeScript attribute="class" />
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <SessionProvider>
-            <CssVarsProvider theme={theme}>
+            <ThemeProvider theme={theme}>
               <CssBaseline />
               <TRPCReactProvider>{children}</TRPCReactProvider>
-            </CssVarsProvider>
+            </ThemeProvider>
           </SessionProvider>
         </AppRouterCacheProvider>
       </body>

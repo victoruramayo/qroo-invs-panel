@@ -32,7 +32,17 @@ export default function Documents() {
   const [folioSearch, setFolioSearch] = useState("");
   const [victimSearch, setVictimSearch] = useState("");
   const [mpSearch, setMpSearch] = useState("");
-  const [documentsColumns, setDocumentsColumns] = useState([]);
+  const [documentsColumns, setDocumentsColumns] = useState<
+    {
+      id: bigint;
+      victim: string;
+      psychologist: string;
+      mp: string;
+      crime: string;
+      reception: string;
+      delivery: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     let isMounted = true;

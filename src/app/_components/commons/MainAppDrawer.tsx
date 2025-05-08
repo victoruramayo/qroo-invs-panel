@@ -1,7 +1,7 @@
 "use client";
 import MainAppBar from "@/app/_components/commons/MainAppBar";
 import SideMenu from "@/app/_components/commons/SideMenu";
-import { ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import { Box } from "@mui/system";
 

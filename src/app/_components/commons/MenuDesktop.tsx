@@ -7,22 +7,19 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MenuDesktop() {
-  const router = useRouter();
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState<number>(-1); //
 
-  const handleNavigation = (path: string, index: number) => {
-    router.push(path);
+  const handleNavigation = (index: number) => {
     setActiveItem(index);
   };
 
   useEffect(() => {
     const index = menuItems.findIndex((item) => {
-
       if (pathname === item.to) return true;
 
       if (item.to === "/dashboard") {
@@ -46,7 +43,8 @@ export default function MenuDesktop() {
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
             <ListItemButton
               selected={activeItem === index}
-              onClick={() => handleNavigation(item.to, index)}
+              href={item.to}
+              onClick={() => handleNavigation(index)}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.label} />
