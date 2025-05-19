@@ -18,49 +18,49 @@ const columnWidths = {
 };
 
 // Función que devuelve las columnas según el breakpoint
-export const getColumns = (isLargeScreen: boolean): GridColDef[] => {
+export const getColumns = (needsFullColumns: boolean): GridColDef[] => {
   return [
     { 
       field: "id", 
       headerName: "Folio", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.id }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.id })
     },
     { 
       field: "victim", 
       headerName: "Víctima", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.victim }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.victim })
     },
     { 
       field: "mp", 
       headerName: "MP", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.mp }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.mp })
     },
     { 
       field: "psychologist", 
       headerName: "Psicólogo", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.psychologist }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.psychologist })
     },
     { 
       field: "crime", 
       headerName: "Crimen", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.crime }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.crime })
     },
     { 
       field: "reception", 
       headerName: "Recepción", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.reception }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.reception })
     },
     { 
       field: "delivery", 
       headerName: "Entrega", 
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.delivery }) 
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.delivery })
     },
     {
       field: "actions",
       headerName: "Opciones",
       sortable: false,
       filterable: false,
-      ...(isLargeScreen ? { flex: 1 } : { width: columnWidths.actions }),
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.actions }),
       renderCell: (params: GridRenderCellParams) => (
         <Box display="flex" justifyContent="center" alignItems="center">
           <IconButton

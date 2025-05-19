@@ -1,10 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { DocumentType } from "@/app/_components/commons/menu";
-import { z } from "zod";
-import { api } from "@/trpc/react";
+import { Controller } from "react-hook-form";
 import { type Psicologist } from "@/app/_components/model/psicologist";
 import {
   Box,
@@ -16,118 +12,46 @@ import {
   MenuItem,
   TextField,
   Typography,
-  useTheme,
 } from "@mui/material";
-import { useMediaQuery } from "@mui/system";
 import { DatePicker } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
+import { useCreateInvestigationForm } from "@/app/_components/hooks/useCreateDocumentForm";
+import { useScreenSize } from "@/app/_components/hooks/useScreenSize";
+
+interface InvestigationFormProps {
+  isOpen: boolean;
+  onToggle: () => void;
+  psycologists: Psicologist[];
+  typeDocuments: { label: string; value: string }[];
+}
 
 export default function InvestigationForm({
   isOpen,
   onToggle,
   psycologists,
   typeDocuments,
-}: {
-  isOpen: boolean;
-  onToggle: () => void;
-  psycologists: Psicologist[];
-  typeDocuments: { label: string; value: string }[];
-}) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-  const investigationSchema = z.object({
-    folio: z.string().min(3, "El folio debe tener al menos 3 caracteres"),
-    folderNumber: z
-      .string()
-      .min(3, "El folio debe tener al menos 3 caracteres"),
-    victimName: z.string().min(3, "El nombre de la víctima es obligatorio"),
-    requestingMP: z.string().min(3, "El MP solicitante es obligatorio"),
-    crime: z.string().min(3, "El delito es obligatorio"),
-    unit: z.string().min(3, "La unidad es obligatoria"),
-    psychologistId: z.coerce
-      .number({ message: "Selecciona un psicólogo" })
-      .min(1),
-    documentType: z.enum([DocumentType.DICTAMEN, DocumentType.INFORME], {
-      message: "Debes seleccionar un tipo de documento",
-    }),
-    receivedAt: z.preprocess(
-      (value) => (dayjs.isDayjs(value) ? value.toDate() : undefined),
-      z.date(),
-    ),
-    deliveredAt: z.preprocess(
-      (value) => (dayjs.isDayjs(value) ? value.toDate() : undefined),
-      z.date().optional(),
-    ),
-  });
-
-  type FormData = z.infer<typeof investigationSchema>;
-
+}: InvestigationFormProps) {
   const {
+    // State
+    errors,
+    isCreating,
+
+    // Form controllers
     register,
-    handleSubmit,
-    reset,
     control,
-    formState: { errors },
-    getValues,
-  } = useForm({
-    resolver: zodResolver(investigationSchema),
-    defaultValues: {
-      folio: "",
-      folderNumber: "",
-      victimName: "",
-      requestingMP: "",
-      crime: "",
-      unit: "",
-      documentType: "",
-      psychologistId: 0,
-      receivedAt: dayjs() as unknown as Date,
-      deliveredAt: undefined,
-    } as unknown as FormData,
-  });
 
-  const utils = api.useUtils();
-  const createInvestigation = api.document.create.useMutation({
-    onSuccess: async () => {
-      // Refrescar la lista
-      await utils.document.getDocuments.invalidate({});
-      onToggle();
-      reset();
-      // En lugar de toaster, usaremos snackbar o una notificación personalizada
-      // Por ahora lo dejamos como console.log
-      console.log("Carpeta creada");
-    },
-    onError: (error) => {
-      if (error.data?.code === "BAD_REQUEST") {
-        console.error(error.message);
-        return;
-      }
-      console.error("Ocurrió un error inesperado.");
-    },
-  });
-
-  const onSubmit = (data: FormData) => {
-    createInvestigation.mutate(data);
-  };
-
-  const handleDateChange = () => {
-    console.log("valoes");
-    console.log(JSON.stringify(getValues()));
-    //console.log(JSON.stringify(errors));
-    return handleSubmit(onSubmit);
-  };
-
-  const handleClose = () => {
-    reset();
-    onToggle();
-  };
+    // Actions
+    handleFormSubmit,
+    handleClose,
+  } = useCreateInvestigationForm({ onToggle });
+  const { isMedium } = useScreenSize();
 
   return (
     <Dialog
       open={isOpen}
       onClose={handleClose}
       maxWidth="md"
-      fullScreen={fullScreen}
+      fullScreen={isMedium}
     >
       <DialogTitle
         sx={{
@@ -224,7 +148,7 @@ export default function InvestigationForm({
           helperText={errors.psychologistId?.message}
           size="small"
         >
-          <MenuItem value="" disabled>
+          <MenuItem value={0} disabled>
             Selecciona Psicólogo
           </MenuItem>
           {psycologists.map((psi) => (
@@ -255,10 +179,10 @@ export default function InvestigationForm({
           ))}
         </TextField>
 
-        {/* Para la fecha de recepción */}
+        {/* Fecha de recepción */}
         <Controller
           name="receivedAt"
-          control={control} // Necesitas añadir 'control' a tu desestructuración de useForm
+          control={control}
           render={({ field }) => (
             <DatePicker
               label="Fecha de recepción"
@@ -279,7 +203,7 @@ export default function InvestigationForm({
           )}
         />
 
-        {/* Para la fecha de entrega (opcional) */}
+        {/* Fecha de entrega (opcional) */}
         <Controller
           name="deliveredAt"
           control={control}
@@ -304,15 +228,16 @@ export default function InvestigationForm({
       </DialogContent>
 
       <DialogActions sx={{ p: 2, bgcolor: "background.paper" }}>
-        <Button onClick={handleClose} color="inherit">
+        <Button onClick={handleClose} color="inherit" disabled={isCreating}>
           Cancelar
         </Button>
         <Button
-          onClick={handleDateChange()}
+          onClick={handleFormSubmit}
           variant="contained"
           color="primary"
+          disabled={isCreating}
         >
-          Guardar
+          {isCreating ? "Guardando..." : "Guardar"}
         </Button>
       </DialogActions>
     </Dialog>
