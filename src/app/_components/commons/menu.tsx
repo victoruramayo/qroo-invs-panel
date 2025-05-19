@@ -17,10 +17,11 @@ export const menuItems: MenuItem[] = [
   {
     label: "Documentos",
     to: "/dashboard/documents",
-    icon: <DocumentScannerOutlinedIcon fontSize="small"/>,
+    icon: <DocumentScannerOutlinedIcon fontSize="small" />,
   },
 ];
 export enum DocumentType {
   INFORME = "INFORME",
   DICTAMEN = "DICTAMEN",
+  NA = "N/A",
 }

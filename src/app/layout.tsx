@@ -9,6 +9,7 @@ import theme from "../theme";
 import { SessionProvider } from "next-auth/react";
 import { CssBaseline } from "@mui/material";
 import InitColorSchemeScript from "@mui/system/InitColorSchemeScript";
+import { MuiDateProvider } from "@/app/_components/providers/MuiDateProvider";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -34,7 +35,9 @@ export default function RootLayout({
           <SessionProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <TRPCReactProvider>{children}</TRPCReactProvider>
+              <MuiDateProvider>
+                <TRPCReactProvider>{children}</TRPCReactProvider>
+              </MuiDateProvider>
             </ThemeProvider>
           </SessionProvider>
         </AppRouterCacheProvider>
