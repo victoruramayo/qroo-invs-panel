@@ -1,32 +1,46 @@
-import "../styles/main.css"
-
-import { Inter } from 'next/font/google'
+import "../styles/main.css";
 import { type Metadata } from "next";
-import "react-datepicker/dist/react-datepicker.css";
-
 import { TRPCReactProvider } from "@/trpc/react";
-import { Provider } from "@/components/ui/provider";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import { Roboto } from "next/font/google";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "../theme";
+
+import { SessionProvider } from "next-auth/react";
+import { CssBaseline } from "@mui/material";
+import InitColorSchemeScript from "@mui/system/InitColorSchemeScript";
+import { MuiDateProvider } from "@/app/_components/providers/MuiDateProvider";
+
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
+});
 
 export const metadata: Metadata = {
   title: "Qroo Dashboard",
   description: "Dashboard para fiscalia",
   icons: [{ rel: "icon", url: "/speedometer.ico" }],
 };
-const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.className}`}
-      suppressHydrationWarning={true}
-    >
+    <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body>
-        <Provider>
-          <TRPCReactProvider>{children}</TRPCReactProvider>
-        </Provider>
+        <InitColorSchemeScript attribute="class" />
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+          <SessionProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <MuiDateProvider>
+                <TRPCReactProvider>{children}</TRPCReactProvider>
+              </MuiDateProvider>
+            </ThemeProvider>
+          </SessionProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

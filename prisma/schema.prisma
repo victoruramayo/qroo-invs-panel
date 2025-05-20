@@ -53,8 +53,15 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    psychologists Psychologist?
+    role          Role?
     investigationsCreated InvestigationFolder[] @relation("investigationsCreated")
     lastInvestigationsUpdated InvestigationFolder[] @relation("lastInvestigationsUpdated")
+}
+
+enum Role {
+    ADMIN
+    PSYCHOLOGIST
 }
 
 model VerificationToken {
@@ -70,6 +77,9 @@ model Psychologist{
     name String
     last_name String
     folders    InvestigationFolder[]
+    userId String? @unique
+    user    User?  @relation(fields: [userId], references: [id])
+
 }
 
 enum DocumentType {

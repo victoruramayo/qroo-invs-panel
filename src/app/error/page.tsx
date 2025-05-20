@@ -1,10 +1,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Box, Button, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { Suspense } from "react";
 import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
+import { Box } from "@mui/system";
+import { Button, Typography } from "@mui/material";
 
 function ClientErrorPage() {
   const router = useRouter();
@@ -13,15 +14,13 @@ function ClientErrorPage() {
 
   return (
     <Box textAlign="center" mt="20">
-      <Text fontSize="2xl" color="red.500">
+      <Typography variant="h5" color="error" sx={{ m: 4 }}>
         Oops! Authentication Error
-      </Text>
-      <Text mt="4" color="gray.600">
+      </Typography>
+      <Typography sx={{ mb: 4 }} color="text.secondary">
         {error}
-      </Text>
-      <Button mt="6" colorScheme="teal" onClick={() => router.push("/")}>
-        Go to Login
-      </Button>
+      </Typography>
+      <Button variant="contained" onClick={() => router.push("/")}>Go to Login</Button>
     </Box>
   );
 }

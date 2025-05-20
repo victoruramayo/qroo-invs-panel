@@ -1,224 +1,102 @@
 "use client";
+
 import {
   Box,
-  createListCollection,
-  Flex,
-  Heading,
-  IconButton,
-  Input,
-  Table,
-  Text,
-  useBreakpointValue,
-  VStack,
-} from "@chakra-ui/react";
-import { MdAdd, MdDelete, MdEdit } from "react-icons/md";
-import {
-  SelectContent,
-  SelectItem,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from "@/components/ui/select";
+  Button,
+  CircularProgress,
+  Paper,
+  Typography,
+} from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { DataGrid } from "@mui/x-data-grid";
+import { getColumns } from "@/app/_components/commons/documents/Columns";
+import DocumentFilters from "@/app/_components/commons/documents/DocumentFilters";
+import InvestigationForm from "@/app/_components/commons/documents/InvestigationForm";
+import { useDocumentsSearch } from "@/app/_components/hooks/useDocumentsSearch";
 import { api } from "@/trpc/react";
-import { useEffect, useState } from "react";
-import InvestigationForm from "@/app/_components/investigation/ModalInvestigationForm";
-import LoadingSpinner from "@/app/_components/commons/LoadingSpinner";
-import {
-  getPsychologistCollect,
-  getTypeDocumentCollect,
-} from "@/app/utils/collectionsSelector";
+import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/system";
+import { useState } from "react";
+import { useScreenSize } from "@/app/_components/hooks/useScreenSize";
 
-export default function DesignTokens() {
-  const { data: psicols } = api.psychologists.getPsychologists.useQuery();
-  const { data: documents, isLoading } = api.document.getDocuments.useQuery({});
-  const [collections, setCollection] = useState(
-    getPsychologistCollect(psicols),
-  );
-  const typeDocumentCollection = getTypeDocumentCollect(true);
-  const [open, setOpen] = useState(false);
-  const alignValue = useBreakpointValue({
-    base: "center",
-    sm: "center",
-    md: "start",
-  });
+export default function Documents() {
+  const {
+    // Estado
+    documentsMapperRow,
+    isLoading,
+    filters,
+    // Datos
+    documentTypes,
+    // Funciones
+    handleFilterChange,
+  } = useDocumentsSearch();
+  const { data: psychologists } = api.psychologists.getPsychologists.useQuery();
+  const { isLarge } = useScreenSize();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
-  useEffect(() => {
-    setCollection(getPsychologistCollect(psicols));
-  }, [psicols]);
-
-  const onOpenModal = () => {
-    setOpen(true);
+  const toggleModal = () => {
+    setIsOpenModal(!isOpenModal);
   };
+
   return (
-    <Box bg="gray.800" color="white" p={8} borderRadius="md">
-      {/* Header */}
-      <VStack align={alignValue} py={8} w="full">
-        <Heading textAlign="start" size="lg" fontWeight="bold">
-          Carpetas de investigacion
-        </Heading>
-
-        <IconButton
-          bg="teal.600"
-          variant="solid"
-          aria-label="Search database"
-          _hover={{ backgroundColor: "teal.400" }}
-          onClick={onOpenModal}
-          color="white"
-          px="4"
-        >
-          <MdAdd />
-          <Text fontSize="sm" fontWeight="bold">
-            Agregar Nuevo
-          </Text>
-        </IconButton>
-      </VStack>
-
-      <Flex
-        mb={4}
-        gap={8}
-        w="full"
-        pr="8"
-        alignItems="center"
-        justifyContent="center"
-        direction="row" // Cambiar la dirección de las columnas en pantallas pequeñas
-        wrap="wrap" //
+    <>
+      <Typography
+        variant="h5"
+        component="h1"
+        gutterBottom
+        sx={{ fontWeight: "bold" }}
       >
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <SelectRoot
-            collection={typeDocumentCollection}
-            bg="gray.800"
-            color="white"
-          >
-            <SelectTrigger>
-              <SelectValueText fontSize="sm" placeholder="Selecciona Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              {typeDocumentCollection.items.map((psi) => (
-                <SelectItem item={psi} key={psi.value}>
-                  {psi.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <SelectRoot collection={collections} bg="gray.800" color="white">
-            <SelectTrigger>
-              <SelectValueText
-                fontSize="sm"
-                placeholder="Selecciona psicologo"
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {collections.items.map((psi) => (
-                <SelectItem item={psi} key={psi.value}>
-                  {psi.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </Box>{" "}
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por numero de folio"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por nombre de victima"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-        <Box flex="1" flexBasis={{ base: "30%", lg: "18%" }}>
-          <Input
-            my="1"
-            px="4"
-            placeholder="Por MP"
-            variant="subtle"
-            bg="gray.600"
-          />
-        </Box>
-      </Flex>
+        Carpetas de investigación
+      </Typography>
 
-      {/* Data Table */}
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : (
-        <Box border="1px solid" borderColor="gray.700" borderRadius="md">
-          <Table.ScrollArea borderWidth="1px" minW="3xs">
-            <Table.Root size="sm">
-              <Table.Header>
-                <Table.Row bg="gray.700">
-                  <Table.ColumnHeader color="white">Folio</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Victima</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">MP</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Psicologo
-                  </Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Crimen</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Recepcion
-                  </Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">Entrega</Table.ColumnHeader>
-                  <Table.ColumnHeader color="white">
-                    Opciones
-                  </Table.ColumnHeader>
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {documents?.map((document) => (
-                  <Table.Row key={document.folio}>
-                    <Table.Cell>{document.folio}</Table.Cell>
-                    <Table.Cell>{document.victimName}</Table.Cell>
-                    <Table.Cell>{document.requestingMP}</Table.Cell>
-                    <Table.Cell>
-                      {document.psychologist.name}{" "}
-                      {document.psychologist.last_name}
-                    </Table.Cell>
-                    <Table.Cell>{document.crime}</Table.Cell>
-                    <Table.Cell>
-                      {document.receivedAt.toLocaleDateString()}
-                    </Table.Cell>
-                    <Table.Cell>
-                      {document.deliveredAt?.toLocaleDateString() ?? "N/A"}
-                    </Table.Cell>
-                    <Table.Cell>
-                      <IconButton
-                        size="sm"
-                        colorPalette="purple"
-                        rounded="full"
-                        mx={2}
-                      >
-                        <MdEdit />
-                      </IconButton>
-                      <IconButton
-                        size="sm"
-                        colorPalette="red"
-                        rounded="full"
-                        mx={2}
-                      >
-                        <MdDelete />
-                      </IconButton>
-                    </Table.Cell>
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Root>
-          </Table.ScrollArea>
-        </Box>
-      )}
-      <InvestigationForm
-        isOpen={open}
-        onToogle={() => setOpen((oldVal) => !oldVal)}
-        psycologists={psicols ?? []}
+      <Button
+        variant="contained"
+        startIcon={<Add />}
+        sx={{ my: 4 }}
+        onClick={toggleModal}
+      >
+        Agregar Nuevo
+      </Button>
+
+      <DocumentFilters
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        psychologists={psychologists ?? []}
+        documentsTypes={documentTypes}
       />
-    </Box>
+
+      {/* DataGrid */}
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Paper elevation={3} sx={{ overflowX: "auto" }}>
+          <Box sx={{ width: "100%" }}>
+            <DataGrid
+              rows={documentsMapperRow}
+              columns={getColumns(!isLarge)}
+              initialState={{
+                pagination: {
+                  paginationModel: { pageSize: 10, page: 0 },
+                },
+              }}
+              pageSizeOptions={[10, 25, 50]}
+              checkboxSelection={false}
+              disableColumnMenu
+              disableColumnSorting
+              disableRowSelectionOnClick
+            />
+          </Box>
+        </Paper>
+      )}
+
+      <InvestigationForm
+        psycologists={psychologists ?? []}
+        isOpen={isOpenModal}
+        typeDocuments={documentTypes}
+        onToggle={toggleModal}
+      />
+    </>
   );
 }

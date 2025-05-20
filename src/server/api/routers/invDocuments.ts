@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { DocumentType } from "@/app/_components/commons/menu";
 
 export const invesmentDocumentRouter = createTRPCRouter({
   getDocuments: protectedProcedure
@@ -11,6 +12,7 @@ export const invesmentDocumentRouter = createTRPCRouter({
         victimName: z.string().optional(),
         requestingMP: z.string().optional(),
         psychologistId: z.number().optional(),
+        documentType: z.enum([DocumentType.DICTAMEN, DocumentType.INFORME, "N/A"]).optional(),
       }),
     )
     .query(({ input, ctx }) => {
@@ -41,6 +43,9 @@ export const invesmentDocumentRouter = createTRPCRouter({
             input.psychologistId
               ? { psychologistId: input.psychologistId }
               : {},
+            input.documentType && input.documentType !== "N/A"
+              ? { document: input.documentType }
+              : {},
           ],
         },
       });
@@ -59,7 +64,7 @@ export const invesmentDocumentRouter = createTRPCRouter({
         psychologistId: z.number().int(),
         receivedAt: z.coerce.date(), // Convertir a Date
         deliveredAt: z.coerce.date().optional(), // Convertir a Date
-        documentType: z.enum(["DICTAMEN", "INFORME"]).optional(),
+        documentType: z.enum([DocumentType.DICTAMEN, DocumentType.INFORME]).optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

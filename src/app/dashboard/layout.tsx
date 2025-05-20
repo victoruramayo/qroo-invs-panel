@@ -1,7 +1,7 @@
 import { auth } from "@/server/auth";
+import { Box, Stack } from "@mui/system";
 import { redirect } from "next/navigation";
-import DashBoardLayout from "@/app/_components/dashboard/Dashboard";
-import { Toaster } from "@/components/ui/toaster";
+import MainAppDrawer from "@/app/_components/commons/MainAppDrawer";
 
 export default async function RootLayout({
   children,
@@ -10,9 +10,10 @@ export default async function RootLayout({
   if (!session) redirect("/");
 
   return (
-    <DashBoardLayout session={session}>
-      {children}
-      <Toaster/>
-    </DashBoardLayout>
+    <Box sx={{ display: "flex" }}>
+      {/* Main content */}
+
+      <MainAppDrawer>{children}</MainAppDrawer>
+    </Box>
   );
 }

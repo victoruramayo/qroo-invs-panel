@@ -1,10 +1,12 @@
-import { Spinner, Text, VStack } from "@chakra-ui/react";
+import { Stack } from "@mui/system";
+import { CircularProgress, Typography } from "@mui/material";
+
 
 export default function LoadingSpinner() {
   return (
-    <VStack colorPalette="teal">
-      <Spinner color="colorPalette.600" />
-      <Text color="colorPalette.600">Loading...</Text>
-    </VStack>
+    <Stack direction="row">
+      <CircularProgress />
+      <Typography>Loading...</Typography>
+    </Stack>
   );
 }
