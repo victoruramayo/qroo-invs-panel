@@ -98,4 +98,51 @@ export const invesmentDocumentRouter = createTRPCRouter({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.coerce.number().min(1),
+        victimName: z.string().min(1),
+        folio: z.string().min(1),
+        folderNumber: z.string().min(1),
+        requestingMP: z.string().min(1),
+        crime: z.string().min(1),
+        unit: z.string().min(1),
+        psychologistId: z.number().int(),
+        receivedAt: z.coerce.date(), // Convertir a Date
+        deliveredAt: z.coerce.date().optional(), // Convertir a Date
+        documentType: z.enum([DocumentType.DICTAMEN, DocumentType.INFORME]).optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const existingFolio = await ctx.db.investigationFolder.findUnique({
+        where: { folio: input.folio },
+      });
+
+      if (existingFolio) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "El folio ya está en uso.",
+        });
+      }
+      return ctx.db.investigationFolder.create({
+        data: {
+          victimName: input.victimName,
+          folio: input.folio,
+          folderNumber: input.folderNumber,
+          requestingMP: input.requestingMP,
+          crime: input.crime,
+          unit: input.unit,
+          psychologist: { connect: { id: input.psychologistId } },
+          receivedAt: input.receivedAt,
+          deliveredAt: input.deliveredAt,
+          document: input.documentType,
+          updatedAt: new Date(),
+          createdByUser: { connect: { email: ctx.session.user.email ?? "" } },
+          lastUpdateByUser: {
+            connect: { email: ctx.session.user.email ?? "" },
+          },
+        },
+      });
+    }),
 });

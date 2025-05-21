@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import type { Psychologist } from "@prisma/client";
 import type { DocumentType } from "@/app/_components/commons/menu";
+import { useSession } from "next-auth/react";
+import { Role } from "@/app/_components/model/user";
 
 export interface FilterState {
   psychologistId: string;
@@ -33,28 +35,31 @@ export default function DocumentFilters({
   psychologists,
   documentsTypes,
 }: DocumentFiltersProps) {
+  const { data: session } = useSession();
   return (
     <Grid container spacing={2} sx={{ mb: 4 }}>
       {/* Selector de Psicólogo */}
-      <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-        <FormControl fullWidth>
-          <InputLabel id="psychologist-select-label">Psicólogo</InputLabel>
-          <Select
-            labelId="psychologist-select-label"
-            id="psychologist-select"
-            value={filters.psychologistId}
-            label="Selecciona psicólogo"
-            onChange={(e) => onFilterChange("psychologistId", e.target.value)}
-          >
-            <MenuItem value="0">Todos</MenuItem>
-            {psychologists.map((psicol) => (
-              <MenuItem key={psicol.id} value={psicol.id}>
-                {psicol.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
+      {session?.user.role === Role.ADMIN && (
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <FormControl fullWidth>
+            <InputLabel id="psychologist-select-label">Psicólogo</InputLabel>
+            <Select
+              labelId="psychologist-select-label"
+              id="psychologist-select"
+              value={filters.psychologistId}
+              label="Selecciona psicólogo"
+              onChange={(e) => onFilterChange("psychologistId", e.target.value)}
+            >
+              <MenuItem value="0">Todos</MenuItem>
+              {psychologists.map((psicol) => (
+                <MenuItem key={psicol.id} value={psicol.id}>
+                  {psicol.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      )}
 
       {/* Selector de Tipo de Dictamen */}
       <Grid size={{ xs: 12, md: 6, lg: 4 }}>

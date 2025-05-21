@@ -4,6 +4,7 @@ import { z } from "zod";
 import { api } from "@/trpc/react";
 import { DocumentType } from "@/app/_components/commons/menu";
 import dayjs from "dayjs";
+import { useSession } from "next-auth/react";
 
 // Definición del esquema Zod
 const investigationSchema = z.object({
@@ -15,7 +16,7 @@ const investigationSchema = z.object({
   unit: z.string().min(3, "La unidad es obligatoria"),
   psychologistId: z.coerce
     .number({ message: "Selecciona un psicólogo" })
-    .min(1),
+    .min(0),
   documentType: z.enum([DocumentType.DICTAMEN, DocumentType.INFORME], {
     message: "Debes seleccionar un tipo de documento",
   }),

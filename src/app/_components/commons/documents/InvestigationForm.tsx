@@ -23,6 +23,7 @@ interface InvestigationFormProps {
   onToggle: () => void;
   psycologists: Psicologist[];
   typeDocuments: { label: string; value: string }[];
+  isAdmin: boolean;
 }
 
 export default function InvestigationForm({
@@ -30,6 +31,7 @@ export default function InvestigationForm({
   onToggle,
   psycologists,
   typeDocuments,
+  isAdmin,
 }: InvestigationFormProps) {
   const {
     // State
@@ -137,26 +139,28 @@ export default function InvestigationForm({
           />
         </Box>
 
-        <TextField
-          {...register("psychologistId")}
-          select
-          label="Psicólogo asignado"
-          required
-          fullWidth
-          margin="normal"
-          error={!!errors.psychologistId}
-          helperText={errors.psychologistId?.message}
-          size="small"
-        >
-          <MenuItem value={0} disabled>
-            Selecciona Psicólogo
-          </MenuItem>
-          {psycologists.map((psi) => (
-            <MenuItem key={psi.id} value={psi.id}>
-              {psi.name}
+        {isAdmin && (
+          <TextField
+            {...register("psychologistId")}
+            select
+            label="Psicólogo asignado"
+            required
+            fullWidth
+            margin="normal"
+            error={!!errors.psychologistId}
+            helperText={errors.psychologistId?.message}
+            size="small"
+          >
+            <MenuItem value={0} disabled>
+              Selecciona Psicólogo
             </MenuItem>
-          ))}
-        </TextField>
+            {psycologists.map((psi) => (
+              <MenuItem key={psi.id} value={psi.id}>
+                {psi.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
 
         <TextField
           {...register("documentType")}

@@ -14,48 +14,55 @@ const columnWidths = {
   crime: 150,
   reception: 120,
   delivery: 120,
-  actions: 120
+  actions: 120,
 };
 
 // Función que devuelve las columnas según el breakpoint
-export const getColumns = (needsFullColumns: boolean): GridColDef[] => {
-  return [
-    { 
-      field: "id", 
-      headerName: "Folio", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.id })
-    },
-    { 
-      field: "victim", 
-      headerName: "Víctima", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.victim })
-    },
-    { 
-      field: "mp", 
-      headerName: "MP", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.mp })
-    },
-    { 
-      field: "psychologist", 
-      headerName: "Psicólogo", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.psychologist })
-    },
-    { 
-      field: "crime", 
-      headerName: "Crimen", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.crime })
-    },
-    { 
-      field: "reception", 
-      headerName: "Recepción", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.reception })
-    },
-    { 
-      field: "delivery", 
-      headerName: "Entrega", 
-      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.delivery })
+export const getColumns = (
+  needsFullColumns: boolean,
+  isAdmin: boolean,
+): GridColDef[] => {
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "Folio",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.id }),
     },
     {
+      field: "victim",
+      headerName: "Víctima",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.victim }),
+    },
+    {
+      field: "mp",
+      headerName: "MP",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.mp }),
+    },
+    {
+      field: "psychologist",
+      headerName: "Psicólogo",
+      ...(needsFullColumns
+        ? { flex: 1 }
+        : { width: columnWidths.psychologist }),
+    },
+    {
+      field: "crime",
+      headerName: "Crimen",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.crime }),
+    },
+    {
+      field: "reception",
+      headerName: "Recepción",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.reception }),
+    },
+    {
+      field: "delivery",
+      headerName: "Entrega",
+      ...(needsFullColumns ? { flex: 1 } : { width: columnWidths.delivery }),
+    },
+  ];
+  if (isAdmin) {
+    columns.push({
       field: "actions",
       headerName: "Opciones",
       sortable: false,
@@ -83,6 +90,7 @@ export const getColumns = (needsFullColumns: boolean): GridColDef[] => {
           </IconButton>
         </Box>
       ),
-    },
-  ];
+    });
+  }
+  return columns;
 };

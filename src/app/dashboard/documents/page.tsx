@@ -14,10 +14,11 @@ import DocumentFilters from "@/app/_components/commons/documents/DocumentFilters
 import InvestigationForm from "@/app/_components/commons/documents/InvestigationForm";
 import { useDocumentsSearch } from "@/app/_components/hooks/useDocumentsSearch";
 import { api } from "@/trpc/react";
-import { useTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@mui/system";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useScreenSize } from "@/app/_components/hooks/useScreenSize";
+import { useSession } from "next-auth/react";
+import { Role } from "@/app/_components/model/user";
+import { is } from "date-fns/locale";
 
 export default function Documents() {
   const {
@@ -33,6 +34,11 @@ export default function Documents() {
   const { data: psychologists } = api.psychologists.getPsychologists.useQuery();
   const { isLarge } = useScreenSize();
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const { data: session } = useSession();
+  const isAdmin = useMemo(
+    () => session?.user.role === Role.ADMIN,
+    [session?.user],
+  );
 
   const toggleModal = () => {
     setIsOpenModal(!isOpenModal);
@@ -75,7 +81,7 @@ export default function Documents() {
           <Box sx={{ width: "100%" }}>
             <DataGrid
               rows={documentsMapperRow}
-              columns={getColumns(!isLarge)}
+              columns={getColumns(!isLarge, isAdmin)}
               initialState={{
                 pagination: {
                   paginationModel: { pageSize: 10, page: 0 },
@@ -96,6 +102,7 @@ export default function Documents() {
         isOpen={isOpenModal}
         typeDocuments={documentTypes}
         onToggle={toggleModal}
+        isAdmin={isAdmin}
       />
     </>
   );
